@@ -4,7 +4,9 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"github.com/xnaveenx/meshguard/internal/controlplane/api"
 	)
+
 func handleRoot(w http.ResponseWriter, r *http.Request){
 	w.Header().Set("Content-Type","application/json")
 	w.WriteHeader(http.StatusOK)
@@ -14,6 +16,7 @@ func handleRoot(w http.ResponseWriter, r *http.Request){
 func main(){
 	mux := http.NewServeMux()
 	mux.HandleFunc("GET /ping", handleRoot)
+	mux.HandleFunc("POST /api/v1/register", api.HandleRegister)
 
 
 	port := ":8080"
