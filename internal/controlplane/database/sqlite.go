@@ -32,7 +32,7 @@ func InitDB(filepath string) (*Database, error) {
 
 func (d *Database) SaveDevice(machinekey, hostname, os string) error{
 	query := `
-	INSERT INTO devices (machinekey, hostname, os)
+	INSERT INTO devices (machine_key, hostname, os)
 	VALUES (?, ?, ?)
 	ON CONFLICT(machine_key) DO UPDATE SET
 		hostname=excluded.hostname,
