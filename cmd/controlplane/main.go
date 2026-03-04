@@ -5,6 +5,7 @@ import (
 	"log"
 	"net/http"
 	"github.com/xnaveenx/meshguard/internal/controlplane/api"
+	"github.com/xnaveenx/meshguard/internal/controlplane/database"
 	)
 
 func handleRoot(w http.ResponseWriter, r *http.Request){
@@ -14,15 +15,24 @@ func handleRoot(w http.ResponseWriter, r *http.Request){
 }
 
 func main(){
+
+	dbConn, err := database.InitDB("meshguard.db")
+	if err != nil{
+		log.Fatalf("Failed to initialize database: %v", err)
+	}
+	
+	apiServer := &api.APIServer{
+		DB: dbConn,
+	}
 	mux := http.NewServeMux()
 	mux.HandleFunc("GET /ping", handleRoot)
-	mux.HandleFunc("POST /api/v1/register", api.HandleRegister)
+	mux.HandleFunc("POST /api/v1/register", apiServer.HandleRegister)
 
 
 	port := ":8080"
 	fmt.Printf("Starting MeshGuard ControlPlane on Port %s \n", port)
 
-	err := http.ListenAndServe(port, mux)
+	err = http.ListenAndServe(port, mux)
 	if err != nil {
 		log.Fatalf("Server failed to start: %v", err)
 	}
